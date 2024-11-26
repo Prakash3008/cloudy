@@ -1,12 +1,16 @@
 .navbar {
-    background-color: #E0F7FA;
+    
 }
 
-.logo {
-    transform: scale(1.5);
+.logo-img {
+    background-image: url('../../assets/cloud.jpg');
+    background-size: cover;
+    height: 100px;
+    width: 150px;
 }
 
 .title {
     display: flex;
     gap: 10px;
+    justify-content: center;
 }
