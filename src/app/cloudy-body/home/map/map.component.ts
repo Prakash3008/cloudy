@@ -22,6 +22,8 @@ export class MapComponent implements OnInit {
   destinationWeatherControl: any;
   stopSelection: any;
   private routingControl: any;
+  recommendations: any = {};
+
 
 
 
@@ -150,12 +152,39 @@ export class MapComponent implements OnInit {
     
   }
 
+  setRecommendations(type: any) {
+    this.recommendations[type] = [];
+    const weather = this.weatherData.weather[0].main;
+    const temp = this.weatherData.main.temp;
+    const aqi = this.aqiData.data.aqi;
+    if (aqi <= 50) {
+      this.recommendations[type].push('Air quality is good. You can go outside without restrictions. AQI: ' + aqi);
+    } else if (aqi <= 100) {
+      this.recommendations[type].push('Air quality is moderate. Limit prolonged outdoor exertion. AQI: ' + aqi);
+    } else if (aqi <= 150) {
+      this.recommendations[type].push('Unhealthy for sensitive groups. People with respiratory or heart conditions should avoid prolonged outdoor exertion. AQI: ' + aqi);
+    } else {
+      this.recommendations[type].push('Unhealthy air quality. Everyone should avoid outdoor activities. AQI: ' + aqi);
+    }
+
+    if (weather === 'Rain') {
+      this.recommendations[type].push('It is raining. Consider indoor activities. Weather: ' + weather);
+    }  
+    if (temp > 30) { 
+      this.recommendations[type].push('It is hot outside. Stay hydrated and avoid excessive sun exposure. Temp: ' + temp);
+    } else if (temp < 10) {
+      this.recommendations[type].push('It is cold outside. Please add layering to keep yourself warm. Temp: ' + temp);
+    }
+    this.homeService.updateRecommendations(this.recommendations)
+  }
+
   updateWeatherAndAQI(position: string) {
     const weather = this.weatherData.weather[0].description;
     const temp = this.weatherData.main.temp;
     const aqi = this.aqiData.data.aqi;
     const color = this.getAQIColor(aqi);
     if(position == "Current Location") {
+      this.setRecommendations(position);
       this.weatherControl.getContainer().innerHTML = `
       <div style="padding: 5px 10px; background: white;border: 1px solid #ccc; border-radius: 5px;">
       <div style="display:flex; gap:2px"><h4>Position: </h4><p>${position}</p></div>
@@ -169,6 +198,7 @@ export class MapComponent implements OnInit {
     }
 
     if(position == "Source Stop"){
+      this.setRecommendations(position);
       this.sourceWeatherControl.getContainer().innerHTML = `
       <div style="padding: 5px 10px; background: white;border: 1px solid #ccc; border-radius: 5px;">
       <div style="display:flex; gap:2px"><h4>Position: </h4><p>${position}</p></div>
@@ -181,6 +211,7 @@ export class MapComponent implements OnInit {
     `;
     }
     if(position == "Destination Stop"){
+      this.setRecommendations(position);
       this.destinationWeatherControl.getContainer().innerHTML = `
       <div style="padding: 5px 10px; background: white;border: 1px solid #ccc; border-radius: 5px;">
       <div style="display:flex; gap:2px"><h4>Position: </h4><p>${position}</p></div>
@@ -198,8 +229,8 @@ export class MapComponent implements OnInit {
   private async drawRoute(): Promise<void> {
     if(this.stopSelection){
       if (this.routingControl) {
-        this.map.removeControl(this.routingControl); // Remove routing control
-        this.routingControl = null; // Clear reference
+        this.map.removeControl(this.routingControl);
+        this.routingControl = null; 
       }
       this.weatherData = await this.apiService.fetchWeatherData(this.stopSelection.source.stop_lat, this.stopSelection.source.stop_lon);
       this.aqiData = await this.apiService.fetchAQIData(this.stopSelection.source.stop_lat, this.stopSelection.source.stop_lon);

@@ -14,5 +14,13 @@ export class HomeService {
     this.stopSelection.next(newState);
   }
 
+  private recommendations = new BehaviorSubject<any>([]);  
+
+  recommendations$ = this.recommendations.asObservable();
+
+  updateRecommendations(newState: any): void {
+    this.recommendations.next(newState);
+  }
+
   constructor() { }
 }

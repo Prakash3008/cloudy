@@ -1,6 +1,5 @@
 .mapContainer {
     width: 70%;
-    height: 85%;
     padding: 20px;
 }
 
@@ -8,4 +7,15 @@
     width: 100%;
     height: 15%;
     padding: 20px;
+}
+
+.homeBody {
+    display: flex;
+    gap: 10px;
+    height: 85%;
+}
+
+.recommendationContainer {
+    padding-top: 20px;
+    padding-right: 20px;
 }
