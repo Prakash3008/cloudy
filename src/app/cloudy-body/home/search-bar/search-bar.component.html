@@ -1,0 +1,24 @@
+<div class="container">
+    <form [formGroup]="myForm" (ngSubmit)="onSubmit()" class="form">
+      <mat-form-field appearance="fill">
+        <mat-label>Source Stop</mat-label>
+        <mat-select formControlName="source" required>
+          <mat-option *ngFor="let option of stopDropdownOptions" [value]="option">
+            {{ option.stop_name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill">
+        <mat-label>Destination Stop</mat-label>
+        <mat-select formControlName="destination" required>
+          <mat-option *ngFor="let option of stopDropdownOptions" [value]="option">
+            {{ option.stop_name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+  
+      <button mat-raised-button color="primary" type="submit" class="submit ">Submit</button>
+    </form>
+  </div>
+  
